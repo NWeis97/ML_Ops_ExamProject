@@ -28,6 +28,19 @@ The data has 5 columns.
 
 As mentioned we will be using the state-of-the-art deep learning model GPT-2 for the classification.
 
+The overall goal of the project is to apply the Transformers framework to our chosen
+Kaggle competition. Furthermore we seek to apply the cookiecutter structure, while also applying
+our newly found knowledge about model configurations using Hydra, Data Version Controlling (DVC),
+GitHub and so forth.
+Furthermore we seek to be able to be pep8 compliant while doing the project in order to follow
+standard coding guidelines.
+
+Your Sincerely,
+Machine Learning Operations Team 20, DTU
+David Ribberholt Ipsen, S164522
+Nicolai Weisbjerg, S174466
+Frederik Hartmann, S174471
+
 Project Organization
 ------------
 
