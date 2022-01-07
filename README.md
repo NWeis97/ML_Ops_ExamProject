@@ -1,7 +1,32 @@
 ML_Ops_ExamProject
 ==============================
 
-This is the exam projectt of group 20 for Machine Learning Operation at DTU.
+This is the exam project of group 20 for Machine Learning Operation at DTU.
+
+The project will be about categorizing tweets, whether they are about real disasters or not.
+It is inspired by the Kaggle competition https://www.kaggle.com/c/nlp-getting-started.
+
+We will use the transformers framework in order to use the state-of-the-art model GPT-2 to categorize
+the competition tweets. It is a network that has been trained in an unsupervised manner,
+which we will adapt to our needs with a supervised finetuning using the data provided by Kaggle.
+
+As mentioned, data is provided by Kaggle. It has 3 types of information
+
+1) a *text* of a tweet
+2) a *keyword* from that tweet (possibly blank)
+3) the *location* the tweet was sent from (possibly blank)
+
+We are predict whether the tweet is about a real disaster *1* or not *0*.
+It consists of 3 files; **train.csv**, **test.csv**, and **sample_submission.csv**
+
+The data has 5 columns.
+1) *id* - a unique identifier for each tweet
+2) *text* - the text of the tweet
+3) *location* - the location the tweet was sent from (may be blank)
+4) *keyword* - a particular keyword from the tweet (may be blank)
+5) *target* - in train.csv only, this denotes whether a tweet is about a real disaster (1) or not (0)
+
+As mentioned we will be using the state-of-the-art deep learning model GPT-2 for the classification.
 
 Project Organization
 ------------
