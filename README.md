@@ -6,7 +6,7 @@ This is the exam project of group 20 for Machine Learning Operation at DTU.
 The project will be about categorizing tweets, whether they are about real disasters or not.
 It is inspired by the Kaggle competition https://www.kaggle.com/c/nlp-getting-started.
 
-We will use the transformers framework in order to use the state-of-the-art model GPT-2 to categorize the competition tweets. It is a network that has been trained in an unsupervised manner, which we will adapt to our needs with a supervised finetuning using the data provided by Kaggle.
+We will use the Transformers framework in order to use the (almost) state-of-the-art model GPT-2 to categorize the tweets - a third-generation version, GPT-3, was announced in Septemeber 2020, but is not a part of the Transformers framework. It is a network that has been trained in an unsupervised manner as a "generel-purpose learner". It can both translate text, answer questions, summarize passages, and generate text output. We will adapt this model to our needs with a supervised finetuning using the data provided by Kaggle.
 
 As mentioned, data is provided by Kaggle. It has 3 types of information
 
