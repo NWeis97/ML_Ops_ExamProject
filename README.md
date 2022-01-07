@@ -38,6 +38,14 @@ Frederik Hartmann, S174471
 
 
 
+Or, as the GPT-2 Transformer would phrase it:
+During the cold times of January, a brave group of three university students called "Team 20", had to make an awesome project in the course, Machine Learning Operations. The awesome project was awesome, because
+
+*"they ended up learning one of the secrets behind the success in Machine Learning Operations : the "Data Driven Development Method ." As usual there was a deadline, and when things got bad, a few people made a "silly" tweet. The people with the project had only been working on the project for less than 24 hours."*
+https://transformer.huggingface.co/doc/gpt2-large
+
+
+
 Project Organization
 ------------
 
