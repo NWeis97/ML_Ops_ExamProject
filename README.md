@@ -35,7 +35,7 @@ GitHub and so forth.
 Furthermore we seek to be able to be pep8 compliant while doing the project in order to follow
 standard coding guidelines.
 
-Your Sincerely,
+Yours Sincerely,
 Machine Learning Operations Team 20, DTU
 David Ribberholt Ipsen, S164522
 Nicolai Weisbjerg, S174466
