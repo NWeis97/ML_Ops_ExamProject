@@ -1,0 +1,65 @@
+[project]
+name = "CookieCutterProject"
+version = "0.1.0"
+description = "Create a pyproject.toml file for an existing project."
+authors = [
+    "Frederik Hartmann <s174471@student.dtu.dk>"
+]
+license = "MIT"
+readme = "README.md"
+python = "^3.9"
+homepage = "https://github.com/fredemandensGit/CookieCutterProject.git"
+repository = "https://github.com/fredemandensGit/CookieCutterProject.git"
+documentation = "https://github.com/fredemandensGit/CookieCutterProject.git"
+
+keywords = ["dtu_mlops", "test-project"]
+
+classifiers = [
+    "Topic :: Machine Learning Operations"
+]
+
+# Requirements
+[dependencies]
+Click = "^7.0"
+
+[dev-dependencies]
+black = { version = "^21.12b0", python = "^3.9" }
+
+[scripts]
+poetry = "infer_pyproject.cli:main"
+
+[build-system]
+requires = [
+    "setuptools >= 35.0.2",
+    "setuptools_scm >= 2.0.0, <3"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.flake8]
+#exclude = venv
+extend-ignore = "W503," # W503: Line break occurred before binary operator
+max-line-length = 100
+
+[tool.black]
+line-length = 100
+target_version = ['py39']
+include = '.pyi?$'
+exclude = '''
+
+(
+  /(
+      .eggs         # exclude a few common directories in the
+    | .git          # root of the project
+    | .hg
+    | .mypy_cache
+    | .tox
+    | .venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''

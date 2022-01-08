@@ -1,23 +1,17 @@
 # # -*- coding: utf-8 -*-
-from sklearn.model_selection import train_test_split
 import os
+
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("./data/raw/train.csv", sep=",")
 df.columns
-X = df[['id', 'keyword', 'location', 'text']]
-y = df['target']
+X = df[["id", "keyword", "location", "text"]]
+y = df["target"]
 
-X_train_val, X_test, y_train_val, y_test = train_test_split(X,y, test_size=0.8)
+X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.8)
 
-print('Finished loading data into memory: X_train_val, X_test, y_train_val, y_test')
-
-
-
-
-
-
-
+print("Finished loading data into memory: X_train_val, X_test, y_train_val, y_test")
 
 
 # import click
