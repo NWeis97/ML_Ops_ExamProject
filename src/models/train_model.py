@@ -1,16 +1,6 @@
-from sklearn.metrics import classification_report, accuracy_score
-from transformers import (set_seed,
-                          TrainingArguments,
-                          Trainer,
-                          GPT2Config,
-                          GPT2Tokenizer,
-                          AdamW, 
-                          get_linear_schedule_with_warmup,
-                          GPT2ForSequenceClassification)
+import argparse
 import io
 import os
-
-import argparse
 import re
 import sys
 
@@ -19,19 +9,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import torch
-from torch import nn, optim
-import os
 import wandb
+from sklearn.metrics import accuracy_score, classification_report
+from torch import nn, optim
+from transformers import (AdamW, GPT2Config, GPT2ForSequenceClassification,
+                          GPT2Tokenizer, Trainer, TrainingArguments,
+                          get_linear_schedule_with_warmup, set_seed)
+
 sns.set_style("whitegrid")
-import numpy as np
 import pdb
 
-
-
+import numpy as np
 
 # Hypereparameter (so far)
 # Name of transformers model - will use already pretrained model.
-model_name = 'gpt2'
+model_name = "gpt2"
 
 # How many labels are we using in training.
 # This is used to decide size of classification head.
@@ -48,10 +40,11 @@ batch_size = 32
 
 # Pad or truncate text sequences to a specific length
 # if `None` it will use maximum sequence of word piece tokens allowed by model.
-max_length = 'none'
+max_length = "none"
 
 # Look for gpu to use. Will use `cpu` by default if no gpu found.
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def main():
 
@@ -60,21 +53,24 @@ def main():
     ###################################################
 
     # Get model configuration.
-    print('Loading configuraiton...')
-    model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path=model_name, num_labels=n_labels)
+    print("Loading configuraiton...")
+    model_config = GPT2Config.from_pretrained(
+        pretrained_model_name_or_path=model_name, num_labels=n_labels
+    )
 
     # Get model's tokenizer.
-    print('Loading tokenizer...')
+    print("Loading tokenizer...")
     tokenizer = GPT2Tokenizer.from_pretrained(pretrained_model_name_or_path=model_name)
     # default to left padding
-    tokenizer.padding_side = "left"   #NB: Needs better understanding
+    tokenizer.padding_side = "left"  # NB: Needs better understanding
     # Define PAD Token = EOS Token = 50256
-    tokenizer.pad_token = tokenizer.eos_token  #NB: Needs better understanding
-
+    tokenizer.pad_token = tokenizer.eos_token  # NB: Needs better understanding
 
     # Get the actual model.
-    print('Loading model...')
-    model = GPT2ForSequenceClassification.from_pretrained(pretrained_model_name_or_path=model_name_or_path, config=model_config)
+    print("Loading model...")
+    model = GPT2ForSequenceClassification.from_pretrained(
+        pretrained_model_name_or_path=model_name_or_path, config=model_config
+    )
 
     # resize model embedding to match new tokenizer
     model.resize_token_embeddings(len(tokenizer))
@@ -84,19 +80,11 @@ def main():
 
     # Load model to defined device.
     model.to(device)
-    print('Model loaded to `%s`'%device)
-
-
-
-
-
+    print("Model loaded to `%s`" % device)
 
     ###################################################
     ################### Load data #####################
     ###################################################
-  
-
-
 
     ###################################################
     ############## Calculate predictions ##############
@@ -157,16 +145,24 @@ def main():
             )
 
     # Save resulting table
-    os.makedirs("reports/predictions/"+ path_to_model, exist_ok=True) #Create if not already exist
+    os.makedirs(
+        "reports/predictions/" + path_to_model, exist_ok=True
+    )  # Create if not already exist
     res.to_csv("reports/predictions/" + path_to_model + modelName + ".csv")
-    
+
     # Save table to wandb
     my_table = wandb.Table(dataframe=res.iloc[0:500])
     my_table.add_column("image", [wandb.Image(im) for im in images[0:500]])
     # Log your Table to W&B
     wandb.log({"mnist_predictions_first500": my_table})
 
-    print('See predictions in "' + "reports/predictions/" + path_to_model + modelName + '.csv"')
+    print(
+        'See predictions in "'
+        + "reports/predictions/"
+        + path_to_model
+        + modelName
+        + '.csv"'
+    )
     print("Done!\n")
 
 
