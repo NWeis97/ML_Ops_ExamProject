@@ -1,6 +1,9 @@
 # # -*- coding: utf-8 -*-
 import os
 
+import torch
+import pdb
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -10,6 +13,15 @@ X = df[["id", "keyword", "location", "text"]]
 y = df["target"]
 
 X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.8)
+
+train_set = pd.concat((X_train_val, y_train_val), axis=1)
+test_set = pd.concat((X_test, y_test), axis=1)
+
+
+# Save files
+save_path = "./data/processed/"
+train_set.to_csv(save_path + "train_processed.csv")
+test_set.to_csv(save_path + "test_processed.csv")
 
 print("Finished loading data into memory: X_train_val, X_test, y_train_val, y_test")
 
