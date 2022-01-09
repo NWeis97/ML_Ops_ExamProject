@@ -1,57 +1,115 @@
 # # -*- coding: utf-8 -*-
+
+######################################
+############## Imports ###############
+######################################
+
+# Standard
 import os
 
+# Data manipulation
 import torch
-import pdb
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv("./data/raw/train.csv", sep=",")
-df.columns
-X = df[["id", "keyword", "location", "text"]]
-y = df["target"]
+# Transformers
+from datasets import Dataset
+from transformers import GPT2Tokenizer, GPT2Config
 
-X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.8)
-
-train_set = pd.concat((X_train_val, y_train_val), axis=1)
-test_set = pd.concat((X_test, y_test), axis=1)
+# Debugging
+import pdb
 
 
-# Save files
-save_path = "./data/processed/"
-train_set.to_csv(save_path + "train_processed.csv")
-test_set.to_csv(save_path + "test_processed.csv")
-
-print("Finished loading data into memory: X_train_val, X_test, y_train_val, y_test")
-
-
-# import click
-# import logging
-# from pathlib import Path
-# from dotenv import find_dotenv, load_dotenv
+######################################
+########## Hyperparameters ###########
+######################################
+model_name = 'gpt2'
+n_labels = 2
 
 
-# @click.command()
-# @click.argument('input_filepath', type=click.Path(exists=True))
-# @click.argument('output_filepath', type=click.Path())
-# def main(input_filepath, output_filepath):
-#     """ Runs data processing scripts to turn raw data from (../raw) into
-#         cleaned data ready to be analyzed (saved in ../processed).
-#     """
-#     logger = logging.getLogger(__name__)
-#     logger.info('making final data set from raw data')
+######################################
+####### Define Dataset class #########
+######################################
+class TorchDataset(torch.utils.data.Dataset):
+    def __init__(self, encodings, labels):
+        self.encodings = encodings
+        self.labels = labels
+
+    def __getitem__(self, idx):
+        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
+        item['labels'] = torch.tensor(self.labels[idx])
+        return item
+
+    def __len__(self):
+        return len(self.labels)
 
 
-# if __name__ == '__main__':
-#     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-#     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
-#     # not used in this stub but often useful for finding various files
-#     project_dir = Path(__file__).resolve().parents[2]
+######################################
+######### Data load function #########
+######################################
 
-#     # find .env automagically by walking up directories until it's found, then
-#     # load up the .env entries as environment variables
-#     load_dotenv(find_dotenv())
+def Load_Data():
 
-#     main()
+    #*************************************
+    #********** Read raw data ************
+    #*************************************
+
+    # Read data from raw
+    df = pd.read_csv("./data/raw/train.csv", sep=",")
+    X = df['text'] #df[['id', 'keyword', 'location', 'text']] let's keep it simple to begin with
+    y = df["target"]
+
+    #Split data in train and test
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+
+    #*************************************
+    #***** Tokenizer Initialization ******
+    #*************************************
+
+    # Get model configuration.
+    print('Loading configuraiton...')
+    model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path=model_name, num_labels=n_labels)
+
+    # Get model's tokenizer.
+    print('Loading tokenizer...')
+    tokenizer = GPT2Tokenizer.from_pretrained(pretrained_model_name_or_path=model_name)
+
+    # default to left padding
+    tokenizer.padding_side = "left"
+
+    # Define PAD Token = EOS Token = 50256
+    tokenizer.pad_token = tokenizer.eos_token
+
+
+    #*************************************
+    #************* Tokenize **************
+    #*************************************
+
+    # Tokenize text using Transformers gpt-2
+    print('Tokenizing training and test datasets')
+    train_encodings = tokenizer(X_train.to_list(),truncation=True, padding=True)
+    test_encodings = tokenizer(X_test.to_list(),truncation=True, padding=True)
+
+    # Convert to PyTorch Datasets
+    print('Converting to TensorDataset')
+    train_set = TorchDataset(train_encodings,y_train.to_list())
+    test_set = TorchDataset(test_encodings,y_test.to_list())
+
+
+    #*************************************
+    #************ Save data **************
+    #*************************************
+
+    # Save datasets in data/processed
+    output_filepath = "./data/processed/"
+    torch.save(train_set, output_filepath + "train_dataset.pt")
+    torch.save(test_set, output_filepath + "test_dataset.pt")
+
+    print("Finished loading and preprocessing data: train_dataset and test_dataset")
+
+
+
+if __name__ == '__main__':
+    Load_Data()
