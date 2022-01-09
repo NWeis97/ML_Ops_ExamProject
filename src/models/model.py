@@ -10,6 +10,10 @@ from transformers import (set_seed,
 
 
 
+from datasets import load_dataset
+imdb = load_dataset("")
+
+
 # Number of batches - depending on the max sequence length and GPU memory.
 # For 512 sequence length batch of 10 works without cuda memory issues.
 # For small sequence length can try batch of 32 or higher.
