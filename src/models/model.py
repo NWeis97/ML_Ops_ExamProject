@@ -1,18 +1,14 @@
-import io
-import os
-
 import torch
-from ml_things import fix_text, plot_confusion_matrix, plot_dict
-from sklearn.metrics import accuracy_score, classification_report
-from transformers import (AdamW, GPT2Config, GPT2ForSequenceClassification,
-                          GPT2Tokenizer, Trainer, TrainingArguments,
-                          get_linear_schedule_with_warmup, set_seed)
+from transformers import (set_seed,
+                          TrainingArguments,
+                          Trainer,
+                          GPT2Config,
+                          GPT2Tokenizer,
+                          AdamW, 
+                          get_linear_schedule_with_warmup,
+                          GPT2ForSequenceClassification)
 
-# Set seed for reproducibility.
-set_seed(123)
 
-# Number of training epochs (authors on fine-tuning Bert recommend between 2 and 4).
-epochs = 4
 
 # Number of batches - depending on the max sequence length and GPU memory.
 # For 512 sequence length batch of 10 works without cuda memory issues.
@@ -50,9 +46,9 @@ tokenizer = GPT2Tokenizer.from_pretrained(
     pretrained_model_name_or_path=model_name_or_path
 )
 # default to left padding
-tokenizer.padding_side = "left"
+tokenizer.padding_side = "left"   #NB: Needs better understanding
 # Define PAD Token = EOS Token = 50256
-tokenizer.pad_token = tokenizer.eos_token
+tokenizer.pad_token = tokenizer.eos_token  #NB: Needs better understanding
 
 
 # Get the actual model.
