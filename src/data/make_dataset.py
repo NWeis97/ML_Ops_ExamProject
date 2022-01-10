@@ -35,13 +35,9 @@ os.makedirs('outputs/'+fileName+'/'+logfp, exist_ok = True)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
-stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(output_file_handler)
-logger.addHandler(stdout_handler)
 
-######################################
-############## Imports ###############
-######################################
+
 
 
 ######################################
@@ -85,7 +81,7 @@ def main():
     input_filepath = configs['input_filepath']
     output_filepath = configs['output_filepath']
     model_name = configs['model_name']
-    n_labels = configs['n_labels']
+    #n_labels = configs['n_labels']
     seed = configs['seed']
 
 
@@ -105,10 +101,6 @@ def main():
     #*************************************
     #***** Tokenizer Initialization ******
     #*************************************
-
-    # Get model configuration.
-    logger.info('Loading configuraiton...')
-    model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path=model_name, num_labels=n_labels)
 
     # Get model's tokenizer.
     logger.info('Loading tokenizer...')
