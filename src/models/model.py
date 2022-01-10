@@ -1,3 +1,5 @@
+# NOT IN USE!
+
 import torch
 from transformers import (set_seed,
                           TrainingArguments,
@@ -11,7 +13,8 @@ from transformers import (set_seed,
 
 
 from datasets import load_dataset
-imdb = load_dataset("")
+imdb = load_dataset("/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/data/processed/train_processed.csv")
+
 
 
 # Number of batches - depending on the max sequence length and GPU memory.
