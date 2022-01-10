@@ -1,0 +1,12 @@
+#config.yaml
+hyperparameters:
+  input_channel: 1
+  conv_to_linear_dim: 144
+  output_dim: 10
+  hidden_channel_array: [4,8,16]
+  hidden_kernel_array: [3,3,3]
+  hidden_stride_array: [1,1,1]
+  hidden_padding_array: [1,1,1]
+  hidden_dim_array: [50]
+  non_linear_function_array: []
+  regularization_array: []
