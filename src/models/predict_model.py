@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## -*- coding: utf-8 -*-
 ######################################
 ############## Imports ###############
@@ -191,7 +190,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-=======
-from ml_things import plot_dict, plot_confusion_matrix, fix_text
-from sklearn.metrics import classification_report, accuracy_score
->>>>>>> a38d39ddfd405d4659fc64ca7522a72fedbbc23f
