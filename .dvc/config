@@ -1,4 +1,6 @@
 [core]
-    remote = storage
+    remote = remote_storage
 ['remote "storage"']
     url = gdrive://1TCOnVtju591mbD1NRiOS3_jNyS4Th-R-
+['remote "remote_storage"']
+    url = gs://gpt2_exam_project_bucket/

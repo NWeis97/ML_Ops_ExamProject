@@ -40,11 +40,6 @@ logger.addHandler(output_file_handler)
 logger.addHandler(stdout_handler)
 
 ######################################
-############## Imports ###############
-######################################
-
-
-######################################
 ####### Define Dataset class #########
 ######################################
 class TorchDataset(torch.utils.data.Dataset):
