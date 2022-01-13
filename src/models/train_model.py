@@ -39,7 +39,6 @@ import wandb
 # Graphics
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_style("whitegrid")
 
 # Logging (WandB)
 import wandb
@@ -63,7 +62,7 @@ logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
 logger.addHandler(output_file_handler)
 
-
+sns.set_style("whitegrid")
 
 #*************************************
 #******** Get WandB API Key **********
