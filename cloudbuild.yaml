@@ -1,0 +1,6 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/examproject-own/testing', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/examproject-own/testing']
+timeout: 1200s
