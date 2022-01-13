@@ -1,5 +1,14 @@
+datasets==1.17.0
+hydra-core==1.1.1
 matplotlib==3.5.1
+ml_things==0.0.1
 numpy==1.22.0
+omegaconf==2.1.1
 pandas==1.3.5
 scikit_learn==1.0.2
-setuptools==58.0.4
+seaborn==0.11.2
+setuptools==56.0.0
+torch==1.10.1
+tqdm==4.62.3
+transformers==4.15.0
+wandb==0.12.9
