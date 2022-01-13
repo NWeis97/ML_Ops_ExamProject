@@ -48,9 +48,7 @@ os.makedirs('outputs/'+fileName+'/'+logfp, exist_ok = True)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
-#stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(output_file_handler)
-#logger.addHandler(stdout_handler)
 
 
 

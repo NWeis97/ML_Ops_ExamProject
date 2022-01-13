@@ -52,9 +52,7 @@ os.makedirs('outputs/'+fileName+'/'+logfp, exist_ok = True)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
-#stdout_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(output_file_handler)
-#logger.addHandler(stdout_handler)
 
 
 
@@ -117,6 +115,7 @@ def main():
     train_set = DataLoader(Train, batch_size=batch_size, shuffle=True)
     val_set = DataLoader(Val, batch_size=batch_size, shuffle=False)
 
+
     #*************************************
     #*********** Load Model **************
     #*************************************
@@ -126,6 +125,7 @@ def main():
     model_config = GPT2Config.from_pretrained(
         pretrained_model_name_or_path=model_name, num_labels=n_labels
     )
+
     # Get the actual model.
     logger.info("Loading model...")
     model = GPT2ForSequenceClassification.from_pretrained(
