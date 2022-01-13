@@ -37,9 +37,6 @@ logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
 logger.addHandler(output_file_handler)
 
-
-
-
 ######################################
 ####### Define Dataset class #########
 ######################################
