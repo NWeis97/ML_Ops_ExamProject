@@ -46,6 +46,7 @@ import wandb
 
 # Import the Secret Manager client library.
 from google.cloud import storage, secretmanager
+from google.oauth2 import service_account
 
 # Configs
 from hydra import compose, initialize
@@ -63,14 +64,18 @@ output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', 
 logger.addHandler(output_file_handler)
 
 
+
 #*************************************
 #******** Get WandB API Key **********
 #*************************************
 def get_wandb_api_key(project_id):
+    # Get cridentials from json
+    credentials = service_account.Credentials.from_service_account_file(
+    './credentials/SecretManagerAccessor.json')
     # ID of the secret to create.
     secret_id = "wandb-apikey-secret"
     # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient()
+    client = secretmanager.SecretManagerServiceClient(credentials=credentials)
     name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
     # Access the secret version.
     return client.access_secret_version(name=name).payload.data.decode("utf-8")
@@ -284,6 +289,7 @@ def run():
      #*************************************
      #************ Arguments **************
      #*************************************
+    print('Loading arguments...\n')
 
     args_parser = argparse.ArgumentParser()
     # Save to GS bucket
@@ -301,12 +307,12 @@ def run():
     #*************************************
     #********* Hyperparameters ***********
     #*************************************
+    print('Loading hyperparameters...\n')
 
     initialize(config_path="../../configs/", job_name="train")
     cfg = compose(config_name="training.yaml")
     cfg_data = compose(config_name="makedata.yaml")
-    print('')
-    print(f"Data configurations: \n {OmegaConf.to_yaml(cfg_data)}")
+    print(f"\nData configurations: \n {OmegaConf.to_yaml(cfg_data)}")
     print(f"Training configuration: \n {OmegaConf.to_yaml(cfg)}")
     configs = cfg['hyperparameters']
 
@@ -336,9 +342,15 @@ def run():
     #*************************************
     #*********** WandB setup *************
     #*************************************
+    print('Setting up WandB connection and initialization...\n')
+
     args.project_id = 'examproject-mlops'
     wandb_api_key = get_wandb_api_key(args.project_id)
     os.environ["WANDB_API_KEY"] = wandb_api_key
+
+
+    #os.system("gcloud auth login")
+    #os.system("gcloud auth activate-service-account ACCOUNT --key-file=KEY-FILE")
 
     wandb.init(project=args.project_id, 
               entity="mlops_swaggers",
@@ -351,12 +363,14 @@ def run():
     #*************************************
     
     # Load data
+    print('Loading data...\n')
     train_set, val_set = load_data(data_output_filepath, 
                                    batch_ratio_validation, 
                                    batch_size
                                    )
     
     # Load model
+    print('Loading model...\n')
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = load_model(model_name, n_labels, device)
 
@@ -367,9 +381,7 @@ def run():
     optimizer, lr_scheduler = load_optimizer(model, train_set, optimizer_type, lr, weight_decay, lr_scheduler, warmup_step_perc, epochs)
     
     # Train the model
-    print('')
-    print('Training model...')
-    print('')
+    print('Training model...\n')
     
     # Extra
     progress_bar = tqdm(range(epochs * len(train_set)))
@@ -393,8 +405,7 @@ def run():
         print("Training_loss: " + str(train_loss))
         print("Training_accuracy: " + str(train_acc))
         print("Validation_loss: " + str(val_loss))
-        print("Validation_accuracy: " + str(val_acc))
-        print("")
+        print("Validation_accuracy: " + str(val_acc) + "\n")
 
         #wandb
         wandb.log({"Training_loss": train_loss})
@@ -404,6 +415,7 @@ def run():
 
     
     # Save model
+    print("Saving model...\n")
     save_model(model, args.job_dir, model_name)
     
 

@@ -38,10 +38,6 @@ JOB_NAME=examproject_mlops$(date +%Y%m%d_%H%M%S)
 # or use the default '`us-central1`'. The region is where the model will be deployed.
 REGION=europe-west1
 
-# WANDB_API_KEY: Set API KEY for automatically login to WandB
-SECRET_WANDB_API=wandb-apikey-secret
-export WANDB_API_KEY='gcp:///${PROJECT_ID}/${SECRET_WANDB_API}'
-gcp-get-secret bash -c 'echo $WANDB_API_KEY'
 
 # Build the docker image
 # docker build -f Dockerfile -t ${IMAGE_URI} ./
@@ -61,7 +57,7 @@ gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --scale-tier CUSTOM \
     --master-machine-type n1-highmem-8 \
     -- \
-    --job-dir=${JOB_DIR}
+    --job-dir=${JOB_DIR} \
     --project-id=${PROJECT_ID}
 
 # Stream the logs from the job

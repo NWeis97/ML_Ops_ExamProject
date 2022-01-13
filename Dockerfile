@@ -21,6 +21,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN pip3 install git+https://github.com/gmihaila/ml_things.git --no-cache-dir
 RUN pip3 install google-cloud-storage --no-cache-dir
 RUN pip3 install google-cloud-secret-manager --no-cache-dir
+RUN pip3 install --upgrade google-auth --no-cache-dir
 
 # Install requirements
 WORKDIR /
