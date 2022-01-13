@@ -27,7 +27,19 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py
+
+## Make Train
+train: requirements
+	$(PYTHON_INTERPRETER) src/models/train_model.py 
+
+## Make Predict
+predict: requirements
+	$(PYTHON_INTERPRETER) src/models/predict_model.py 
+
+## Make Visualizations
+visual: requirements
+	$(PYTHON_INTERPRETER) src/visualization/visualize.py 
 
 ## Delete all compiled Python files
 clean:
