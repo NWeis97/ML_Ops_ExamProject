@@ -18,8 +18,9 @@ RUN apt update
 RUN apt install -y git
 RUN apt install -y wget
 RUN rm -rf /var/lib/apt/lists/*
-RUN pip3 install git+https://github.com/gmihaila/ml_things.git
-RUN pip3 install google-cloud-storage
+RUN pip3 install git+https://github.com/gmihaila/ml_things.git --no-cache-dir
+RUN pip3 install google-cloud-storage --no-cache-dir
+RUN pip3 install google-cloud-secret-manager --no-cache-dir
 
 # Install requirements
 WORKDIR /

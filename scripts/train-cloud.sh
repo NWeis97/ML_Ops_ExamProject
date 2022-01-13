@@ -16,12 +16,14 @@
 # This scripts performs cloud training for a PyTorch model.
 echo "Training cloud ML model"
 
-PROJECT_ID=examproject-own
+# PROJECT_ID: project id on gcp
+PROJECT_ID=examproject-mlops
 
-BUCKET_ID=examproject-own-b1
+# BUCKET_ID: bucket id for saving trained model
+BUCKET_ID=gpt2_exam_project_bucket
 
 # IMAGE_REPO_NAME: the image will be stored on Cloud Container Registry
-IMAGE_REPO_NAME=testing
+IMAGE_REPO_NAME=dockers
 
 # IMAGE_TAG: an easily identifiable tag for your docker image
 IMAGE_TAG=latest
@@ -30,11 +32,16 @@ IMAGE_TAG=latest
 IMAGE_URI=gcr.io/${PROJECT_ID}/${IMAGE_REPO_NAME}:${IMAGE_TAG}
 
 # JOB_NAME: the name of your job running on AI Platform.
-JOB_NAME=examproject_own$(date +%Y%m%d_%H%M%S)
+JOB_NAME=examproject_mlops$(date +%Y%m%d_%H%M%S)
 
 # REGION: select a region from https://cloud.google.com/ml-engine/docs/regions
 # or use the default '`us-central1`'. The region is where the model will be deployed.
 REGION=europe-west1
+
+# WANDB_API_KEY: Set API KEY for automatically login to WandB
+SECRET_WANDB_API=wandb-apikey-secret
+export WANDB_API_KEY='gcp:///${PROJECT_ID}/${SECRET_WANDB_API}'
+gcp-get-secret bash -c 'echo $WANDB_API_KEY'
 
 # Build the docker image
 # docker build -f Dockerfile -t ${IMAGE_URI} ./
@@ -55,6 +62,7 @@ gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --master-machine-type n1-highmem-8 \
     -- \
     --job-dir=${JOB_DIR}
+    --project-id=${PROJECT_ID}
 
 # Stream the logs from the job
 gcloud ai-platform jobs stream-logs ${JOB_NAME}
