@@ -1,0 +1,47 @@
+Loading data...
+Loading data and splitting training and validation set...
+Loading model...
+Loading configuration...
+Loading model...
+/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/src/data/make_dataset.py:45: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.encodings = {key: torch.tensor(val) for key, val in encodings.items()}
+/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/src/data/make_dataset.py:46: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.labels = torch.tensor(labels)
+Setting up optimizer...
+Setting up scheduler...
+Training model...
+Some weights of GPT2ForSequenceClassification were not initialized from the model checkpoint at gpt2 and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+
+
+ 25%|██████████████████████▎                                                                  | 2/8 [03:11<09:26, 94.46s/it]
+Epoch: 1/4
+Training_loss: 3.414924681186676
+Training_accuracy: 0.5083333333333333
+Validation_loss: 2.4562911987304688
+ 25%|██████████████████████▎                                                                  | 2/8 [03:11<09:26, 94.46s/it]Traceback (most recent call last):
+  File "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/src/models/train_model.py", line 412, in <module>
+    run()
+  File "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/src/models/train_model.py", line 378, in run
+    train_loss, train_acc = train(model,
+  File "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/src/models/train_model.py", line 209, in train
+    outputs = model(**batch)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 1370, in forward
+    transformer_outputs = self.transformer(
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 887, in forward
+    outputs = block(
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 395, in forward
+    attn_outputs = self.attn(
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/transformers/models/gpt2/modeling_gpt2.py", line 339, in forward
+    attn_output = self.c_proj(attn_output)
+  File "/opt/anaconda3/envs/Py39_MLOps/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1164, in __getattr__
+    def __getattr__(self, name: str) -> Union[Tensor, 'Module']:
+KeyboardInterrupt

@@ -58,7 +58,9 @@ gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --master-machine-type n1-highmem-8 \
     -- \
     --job-dir=${JOB_DIR} \
-    --project-id=${PROJECT_ID}
+    --project-id=${PROJECT_ID} \
+    -- \
+    --WANDB_API_KEY=""  #Set own WANDB_API_KEY
 
 # Stream the logs from the job
 gcloud ai-platform jobs stream-logs ${JOB_NAME}

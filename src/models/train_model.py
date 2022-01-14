@@ -42,6 +42,7 @@ import seaborn as sns
 
 # Logging (WandB)
 import wandb
+import json
 
 # Import the Secret Manager client library.
 from google.cloud import storage, secretmanager
@@ -63,21 +64,6 @@ output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', 
 logger.addHandler(output_file_handler)
 
 sns.set_style("whitegrid")
-
-#*************************************
-#******** Get WandB API Key **********
-#*************************************
-def get_wandb_api_key(project_id):
-    # Get cridentials from json
-    credentials = service_account.Credentials.from_service_account_file(
-    './credentials/SecretManagerAccessor.json')
-    # ID of the secret to create.
-    secret_id = "wandb-apikey-secret"
-    # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient(credentials=credentials)
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-    # Access the secret version.
-    return client.access_secret_version(name=name).payload.data.decode("utf-8")
 
 
 #*************************************
@@ -299,7 +285,11 @@ def run():
     args_parser.add_argument(
         '--project-id',
         help='GCS project id name')
-        
+    
+    # WandB related
+    args_parser.add_argument('--WANDB_API_KEY')
+
+    # Add arguments
     args = args_parser.parse_args()
 
 
@@ -341,20 +331,16 @@ def run():
     #*************************************
     #*********** WandB setup *************
     #*************************************
-    print('Setting up WandB connection and initialization...\n')
+    if args.WANDB_API_KEY is not None:
+        print('Setting up WandB connection and initialization...\n')
 
-    args.project_id = 'examproject-mlops'
-    wandb_api_key = get_wandb_api_key(args.project_id)
-    os.environ["WANDB_API_KEY"] = wandb_api_key
+        # Get configs
+        os.environ["WANDB_API_KEY"] = args.WANDB_API_KEY
 
-
-    #os.system("gcloud auth login")
-    #os.system("gcloud auth activate-service-account ACCOUNT --key-file=KEY-FILE")
-
-    wandb.init(project=args.project_id, 
-              entity="mlops_swaggers",
-              config={"Model&Data": cfg_data['hyperparameters'], "Train": configs},
-              job_type="Train")
+        wandb.init(project=args.project_id, 
+                entity="mlops_swaggers",
+                config={"Model&Data": cfg_data['hyperparameters'], "Train": configs},
+                job_type="Train")
     
     
     #*************************************
@@ -373,8 +359,9 @@ def run():
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = load_model(model_name, n_labels, device)
 
-    # Optional
-    wandb.watch(model, log_freq=100)
+    # If WandB is applicable
+    if args.WANDB_API_KEY is not None:
+        wandb.watch(model, log_freq=100)
 
     # Set optimizer
     optimizer, lr_scheduler = load_optimizer(model, train_set, optimizer_type, lr, weight_decay, lr_scheduler, warmup_step_perc, epochs)
@@ -407,10 +394,11 @@ def run():
         print("Validation_accuracy: " + str(val_acc) + "\n")
 
         #wandb
-        wandb.log({"Training_loss": train_loss})
-        wandb.log({"Validation_loss": val_loss})
-        wandb.log({"Training_accuracy": train_acc})
-        wandb.log({"Validation_accuracy": val_acc})
+        if args.WANDB_API_KEY is not None:
+            wandb.log({"Training_loss": train_loss})
+            wandb.log({"Validation_loss": val_loss})
+            wandb.log({"Training_accuracy": train_acc})
+            wandb.log({"Validation_accuracy": val_acc})
 
     
     # Save model
