@@ -1,0 +1,22 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.9.7",
+    "heartbeatAt": "2022-01-13T14:37:06.690602",
+    "startedAt": "2022-01-13T14:37:05.645102",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/Users/frederikhartmann/Desktop/3. Semester/Januar MLOPS/ML_Ops_ExamProject/wandbproj.py",
+    "codePath": "wandbproj.py",
+    "git": {
+        "remote": "https://github.com/NWeis97/ML_Ops_ExamProject.git",
+        "commit": "18d24a6762e8b0fc060c35ef4382eb65428770f3"
+    },
+    "email": "frederik_hartmann@hotmail.com",
+    "root": "/Users/frederikhartmann/Desktop/3. Semester/Januar MLOPS/ML_Ops_ExamProject",
+    "host": "airtilhfrederik.students.clients.local",
+    "username": "frederikhartmann",
+    "executable": "/Users/frederikhartmann/opt/anaconda3/envs/Py39_MLOps/bin/python"
+}
