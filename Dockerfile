@@ -15,6 +15,7 @@ COPY data/ data/
 COPY configs/ configs/
 
 # Install ML_things and google.cloud storage
+RUN apt update
 RUN apt install -y git
 RUN apt install -y wget
 RUN rm -rf /var/lib/apt/lists/*
