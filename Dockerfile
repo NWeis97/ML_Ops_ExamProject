@@ -13,10 +13,8 @@ COPY setup.py setup.py
 COPY src/ src/
 COPY data/ data/
 COPY configs/ configs/
-COPY credentials/ credentials/
 
 # Install ML_things and google.cloud storage
-RUN apt update
 RUN apt install -y git
 RUN apt install -y wget
 RUN rm -rf /var/lib/apt/lists/*
