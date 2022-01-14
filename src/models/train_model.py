@@ -391,10 +391,10 @@ def run():
 
         #wandb
         if args.wandb_api_key is not None:
-            wandb.log({"Training_loss": train_loss})
-            wandb.log({"Validation_loss": val_loss})
-            wandb.log({"Training_accuracy": train_acc})
-            wandb.log({"Validation_accuracy": val_acc})
+            wandb.log({"Training_loss": train_loss,
+                       "Validation_loss": val_loss,
+                       "Training_accuracy": train_acc,
+                       "Validation_accuracy": val_acc})
 
     
     # Save model
