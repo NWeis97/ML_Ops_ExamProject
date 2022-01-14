@@ -3,4 +3,4 @@ data/
 models/
 scripts-wandb/
 wandb/
-Outputs/
+outputs/

@@ -8,7 +8,6 @@
 import os
 import datetime
 import re
-import sys
 
 # Data manipulation
 import torch
@@ -16,8 +15,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # Transformers
-from datasets import Dataset
-from transformers import GPT2Tokenizer, GPT2Config
+from transformers import GPT2Tokenizer
 
 # Debugging
 import pdb
@@ -36,6 +34,23 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
 logger.addHandler(output_file_handler)
+
+#*************************************
+#********* Hyperparameters ***********
+#*************************************
+
+initialize(config_path="../../configs/", job_name="model")
+cfg = compose(config_name="makedata.yaml")
+logger.info(f"configuration: \n {OmegaConf.to_yaml(cfg)}")
+configs = cfg['hyperparameters']
+
+# Hyperparameters extracted
+input_filepath = configs['input_filepath']
+output_filepath = configs['output_filepath']
+model_name = configs['model_name']
+#n_labels = configs['n_labels']
+seed = configs['seed']
+
 
 ######################################
 ####### Define Dataset class #########
@@ -58,30 +73,11 @@ class TorchDataset(torch.utils.data.Dataset):
         return TorchDataset(items,self.labels[idx_from:idx_to])
 
 
-
 ######################################
 ######### Data load function #########
 ######################################
 
-def main():
-
-    #*************************************
-    #********* Hyperparameters ***********
-    #*************************************
-
-    initialize(config_path="../../configs/", job_name="model")
-    cfg = compose(config_name="makedata.yaml")
-    logger.info(f"configuration: \n {OmegaConf.to_yaml(cfg)}")
-    configs = cfg['hyperparameters']
-
-    # Hyperparameters extracted
-    input_filepath = configs['input_filepath']
-    output_filepath = configs['output_filepath']
-    model_name = configs['model_name']
-    #n_labels = configs['n_labels']
-    seed = configs['seed']
-
-
+def read_data():
     #*************************************
     #********** Read raw data ************
     #*************************************
@@ -93,8 +89,10 @@ def main():
 
     #Split data in train and test
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=seed)
+    
+    return X_train, X_test, y_train, y_test
 
-
+def tokenizer(X_train, X_test, y_train, y_test):
     #*************************************
     #***** Tokenizer Initialization ******
     #*************************************
@@ -118,13 +116,19 @@ def main():
     logger.info('Tokenizing training and test datasets')
     train_encodings = tokenizer(X_train.to_list(),truncation=True, padding=True)
     test_encodings = tokenizer(X_test.to_list(),truncation=True, padding=True)
+    
+    return train_encodings, test_encodings
 
+def convert_to_torchdataset(train_encodings, test_encodings, y_train, y_test):
     # Convert to PyTorch Datasets
     logger.info('Converting to TensorDataset')
     train_set = TorchDataset(train_encodings,y_train.to_list())
     test_set = TorchDataset(test_encodings,y_test.to_list())
+    
+    return train_set, test_set
 
 
+def save_data(train_set, test_set, X_test, output_filepath):
     #*************************************
     #************ Save data **************
     #*************************************
@@ -139,4 +143,15 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    
+    # Read data
+    X_train, X_test, y_train, y_test = read_data()
+    
+    # Tokenize data
+    train_encodings, test_encodings = tokenizer(X_train, X_test, y_train, y_test)
+    
+    # Convert to torch dataset
+    train_set, test_set = convert_to_torchdataset(train_encodings, test_encodings, y_train, y_test)
+    
+    # Save data 
+    save_data(train_set, test_set, X_test, output_filepath)
