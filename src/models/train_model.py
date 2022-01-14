@@ -1,11 +1,7 @@
 ## -*- coding: utf-8 -*-
-
-# NB: ENABLE FOR RUNNING SUBSET OF DATA
-subset = True
-
-######################################
-############## Imports ###############
-######################################
+# #####################################
+# ############# Imports ###############
+# #####################################
 
 # Standard
 import os
@@ -39,10 +35,10 @@ import wandb
 # Graphics
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_style("whitegrid")
 
 # Logging (WandB)
 import wandb
+import json
 
 # Import the Secret Manager client library.
 from google.cloud import storage, secretmanager
@@ -63,35 +59,19 @@ logger.setLevel(logging.INFO)
 output_file_handler = logging.FileHandler('outputs/'+fileName+'/'+logfp+'.log', encoding='utf-8')
 logger.addHandler(output_file_handler)
 
-
-
-#*************************************
-#******** Get WandB API Key **********
-#*************************************
-def get_wandb_api_key(project_id):
-    # Get cridentials from json
-    credentials = service_account.Credentials.from_service_account_file(
-    './credentials/SecretManagerAccessor.json')
-    # ID of the secret to create.
-    secret_id = "wandb-apikey-secret"
-    # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient(credentials=credentials)
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-    # Access the secret version.
-    return client.access_secret_version(name=name).payload.data.decode("utf-8")
+sns.set_style("whitegrid")
 
 
 #*************************************
 #************ Load Data **************
 #*************************************
-def load_data(data_output_filepath, batch_ratio_validation, batch_size):
+def load_data(data_output_filepath, batch_ratio_validation, batch_size, subset):
 
     # Load data and put in DataLoader (also split into train and validation data)
-    print("Loading data and splitting training and validation set...")
     Train = torch.load(data_output_filepath + "train_dataset.pt")
 
     # To be out-commented (only running a subset of the data)
-    if subset == True:
+    if subset == "True":
         Train = Train.__select__(0,300)
 
     num_val = int(batch_ratio_validation*Train.__len__())
@@ -108,13 +88,11 @@ def load_data(data_output_filepath, batch_ratio_validation, batch_size):
 #*************************************
 def load_model(model_name, n_labels, device):
     # Get model configuration.
-    print("Loading configuration...")
     model_config = GPT2Config.from_pretrained(
         pretrained_model_name_or_path=model_name, num_labels=n_labels
     )
 
     # Get the actual model.
-    print("Loading model...")
     model = GPT2ForSequenceClassification.from_pretrained(
         pretrained_model_name_or_path=model_name, config=model_config
     )
@@ -163,27 +141,12 @@ def save_model(model, job_dir, model_name):
     torch.save(model_to_save.state_dict(), output_model_file)
     model_to_save.config.to_json_file(output_config_file)
 
-    # 
+    # Save model to bucket
     bucket = storage.Client().bucket(bucket_name)
     blob = bucket.blob(os.path.join(model_path, WEIGHTS_NAME))
     blob.upload_from_filename(WEIGHTS_NAME)
     blob = bucket.blob(os.path.join(model_path, CONFIG_NAME))
     blob.upload_from_filename(CONFIG_NAME)
-
-    """
-    print('output_model_file: ' + output_model_file)
-    print('output_model_file: ' + output_config_file)
-    # Find model locally on vm and upload all files to gs
-    assert os.path.isdir(local_model_path)
-    
-    print('bucket_name: ' + bucket_name)
-    for local_file in glob.glob(local_model_path+ '/**'):
-        print('local_file: ' + local_file)
-        print('model_path: ' + model_path)
-        file_name = os.path.basename(local_file)
-        print('file_name: ' + file_name)
-    """
-        
     
 
 
@@ -191,7 +154,7 @@ def save_model(model, job_dir, model_name):
 #********* Set optimizer *************
 #*************************************
 def load_optimizer(model, train_set, optimizer_type, lr, weight_decay, lr_scheduler, warmup_step_perc, epochs):
-    print("Setting up optimizer...")
+
     if optimizer_type == 'adamw':
         optimizer = AdamW(model.parameters(), lr=lr, weight_decay = weight_decay)
     else:
@@ -218,7 +181,11 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
     acc_train= load_metric("accuracy")
     running_loss_train = 0
     
+    step = 0
     for batch in train_set:
+        # Update step 
+        step += 1
+
         # Load batch and send to device
         batch = {k: v.to(device) for k, v in batch.items()}
         outputs = model(**batch)
@@ -241,6 +208,9 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
 
         # Update progress bar
         progress_bar.update(1)
+
+        # Write progress for gcp
+        print(str(step) + '/' + str(len(train_set)))
         
     
     # Evaluate loss and acc
@@ -300,7 +270,19 @@ def run():
     args_parser.add_argument(
         '--project-id',
         help='GCS project id name')
-        
+    args_parser.add_argument(
+        '--subset',
+        help='Use subset of training data?')
+    
+    # WandB related
+    args_parser.add_argument(
+        '--wandb-api-key',
+        help="Your WandB API Key for login")
+    args_parser.add_argument(
+        '--entity',
+        help='WandB project entity')
+
+    # Add arguments
     args = args_parser.parse_args()
 
 
@@ -312,7 +294,7 @@ def run():
     initialize(config_path="../../configs/", job_name="train")
     cfg = compose(config_name="training.yaml")
     cfg_data = compose(config_name="makedata.yaml")
-    print(f"\nData configurations: \n {OmegaConf.to_yaml(cfg_data)}")
+    print(f"Data configurations: \n {OmegaConf.to_yaml(cfg_data)}")
     print(f"Training configuration: \n {OmegaConf.to_yaml(cfg)}")
     configs = cfg['hyperparameters']
 
@@ -342,20 +324,16 @@ def run():
     #*************************************
     #*********** WandB setup *************
     #*************************************
-    print('Setting up WandB connection and initialization...\n')
+    if args.wandb_api_key is not None:
+        print('Setting up WandB connection and initialization...\n')
 
-    args.project_id = 'examproject-mlops'
-    wandb_api_key = get_wandb_api_key(args.project_id)
-    os.environ["WANDB_API_KEY"] = wandb_api_key
+        # Get configs
+        os.environ["WANDB_API_KEY"] = args.wandb_api_key
 
-
-    #os.system("gcloud auth login")
-    #os.system("gcloud auth activate-service-account ACCOUNT --key-file=KEY-FILE")
-
-    wandb.init(project=args.project_id, 
-              entity="mlops_swaggers",
-              config={"Model&Data": cfg_data['hyperparameters'], "Train": configs},
-              job_type="Train")
+        wandb.init(project=args.project_id, 
+                entity=args.entity,
+                config={"Model&Data": cfg_data['hyperparameters'], "Train": configs},
+                job_type="Train")
     
     
     #*************************************
@@ -366,7 +344,8 @@ def run():
     print('Loading data...\n')
     train_set, val_set = load_data(data_output_filepath, 
                                    batch_ratio_validation, 
-                                   batch_size
+                                   batch_size,
+                                   args.subset
                                    )
     
     # Load model
@@ -374,10 +353,13 @@ def run():
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     model = load_model(model_name, n_labels, device)
 
-    # Optional
-    wandb.watch(model, log_freq=100)
+    # If WandB is applicable
+    if args.wandb_api_key is not None:
+        wandb.watch(model, log_freq=100)
+        wandb.log({"Using subset of data": args.subset})
 
     # Set optimizer
+    print("Setting up optimizer...")
     optimizer, lr_scheduler = load_optimizer(model, train_set, optimizer_type, lr, weight_decay, lr_scheduler, warmup_step_perc, epochs)
     
     # Train the model
@@ -408,15 +390,19 @@ def run():
         print("Validation_accuracy: " + str(val_acc) + "\n")
 
         #wandb
-        wandb.log({"Training_loss": train_loss})
-        wandb.log({"Validation_loss": val_loss})
-        wandb.log({"Training_accuracy": train_acc})
-        wandb.log({"Validation_accuracy": val_acc})
+        if args.wandb_api_key is not None:
+            wandb.log({"Training_loss": train_loss,
+                       "Validation_loss": val_loss,
+                       "Training_accuracy": train_acc,
+                       "Validation_accuracy": val_acc})
 
     
     # Save model
-    print("Saving model...\n")
-    save_model(model, args.job_dir, model_name)
+    if args.job_dir is not None:
+        print("Saving model...\n")
+        save_model(model, args.job_dir, model_name)
+    else:
+        print('Job_dir not given, thus not saving model (will no save model when running locally)...')
     
 
 if __name__ == "__main__":

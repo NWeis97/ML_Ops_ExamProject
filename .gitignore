@@ -1,3 +1,6 @@
 credentials/
 data/
 models/
+scripts-wandb/
+wandb/
+outputs/

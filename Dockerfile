@@ -7,6 +7,7 @@ apt install --no-install-recommends -y build-essential gcc && \
 apt clean && rm -rf /var/lib/apt/lists/*
 
 # Copy files to docker
+WORKDIR /
 COPY requirements.txt requirements.txt
 COPY setup.py setup.py
 COPY src/ src/
@@ -24,7 +25,6 @@ RUN pip3 install google-cloud-secret-manager --no-cache-dir
 RUN pip3 install --upgrade google-auth --no-cache-dir
 
 # Install requirements
-WORKDIR /
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 # Installs cloudml-hypertune for hyperparameter tuning.
