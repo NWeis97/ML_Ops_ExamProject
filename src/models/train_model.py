@@ -181,7 +181,11 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
     acc_train= load_metric("accuracy")
     running_loss_train = 0
     
+    step = 0
     for batch in train_set:
+        # Update step 
+        step += 1
+
         # Load batch and send to device
         batch = {k: v.to(device) for k, v in batch.items()}
         outputs = model(**batch)
@@ -204,6 +208,9 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
 
         # Update progress bar
         progress_bar.update(1)
+
+        # Write progress for gcp
+        print(str(step) + '/' + str(len(train_set)))
         
     
     # Evaluate loss and acc
