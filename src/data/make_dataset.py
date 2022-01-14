@@ -143,6 +143,15 @@ def save_data(train_set, test_set, X_test, output_filepath):
 
 
 if __name__ == '__main__':
-    main()
-
     
+    # Read data
+    X_train, X_test, y_train, y_test = read_data()
+    
+    # Tokenize data
+    train_encodings, test_encodings = tokenizer(X_train, X_test, y_train, y_test)
+    
+    # Convert to torch dataset
+    train_set, test_set = convert_to_torchdataset(train_encodings, test_encodings, y_train, y_test)
+    
+    # Save data 
+    save_data(train_set, test_set, X_test, output_filepath)

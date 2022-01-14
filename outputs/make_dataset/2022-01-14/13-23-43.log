@@ -1,0 +1,8 @@
+configuration: 
+ hyperparameters:
+  model_name: gpt2
+  n_labels: 2
+  input_filepath: ./data/raw/
+  output_filepath: ./data/processed/
+  seed: 0
+
