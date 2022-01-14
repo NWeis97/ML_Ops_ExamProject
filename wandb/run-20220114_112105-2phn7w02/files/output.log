@@ -1,8 +1,0 @@
-
-Loading data...
-Traceback (most recent call last):
-  File "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/./src/models/train_model.py", line 404, in <module>
-    run()
-  File "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/./src/models/train_model.py", line 343, in run
-    args.subet
-AttributeError: 'Namespace' object has no attribute 'subet'
