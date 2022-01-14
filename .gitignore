@@ -2,3 +2,5 @@ credentials/
 data/
 models/
 scripts-wandb/
+wandb/
+Outputs/
