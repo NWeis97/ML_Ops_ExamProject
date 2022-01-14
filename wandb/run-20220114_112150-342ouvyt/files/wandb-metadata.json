@@ -1,0 +1,27 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.9.7",
+    "heartbeatAt": "2022-01-14T10:21:51.505005",
+    "startedAt": "2022-01-14T10:21:50.334380",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--project-id=examproject-mlops",
+        "--subset=True",
+        "--wandb-api-key=7cdf540bc0d52d2ef5a24130fe40407528f70f8a",
+        "--entity=mlops_swaggers"
+    ],
+    "state": "running",
+    "program": "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/./src/models/train_model.py",
+    "codePath": "src/models/train_model.py",
+    "git": {
+        "remote": "https://github.com/NWeis97/ML_Ops_ExamProject.git",
+        "commit": "b6b242c9d99f6435e6702e85aedf82ff995b7b9b"
+    },
+    "email": "nicolai.weisbjerg@gmail.com",
+    "root": "/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject",
+    "host": "Nicolais-MacBook-Pro-2.local",
+    "username": "weis",
+    "executable": "/opt/anaconda3/envs/Py39_MLOps/bin/python3"
+}

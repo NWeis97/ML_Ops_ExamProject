@@ -52,15 +52,17 @@ echo "Submitting the training job"
 JOB_DIR=gs://${BUCKET_ID}/models/base
 
 gcloud beta ai-platform jobs submit training ${JOB_NAME} \
-    --region ${REGION} \
-    --master-image-uri ${IMAGE_URI} \
-    --scale-tier CUSTOM \
-    --master-machine-type n1-highmem-8 \
-    -- \
-    --job-dir=${JOB_DIR} \
-    --project-id=${PROJECT_ID} \
-    -- \
-    --WANDB_API_KEY=""  #Set own WANDB_API_KEY
+    --region ${REGION}\ #Region where to run computations
+    --master-image-uri ${IMAGE_URI}\ #Image for container build
+    --scale-tier CUSTOM\
+    --master-machine-type n1-highmem-8\ #Computer type
+    --\
+    --job-dir=${JOB_DIR}\ #Set local job direction
+    --project-id=${PROJECT_ID}\  #Set project id
+    --subset="False"\ #Only use subset of training data
+    --\
+    --WANDB_API_KEY=""\ #Set own WANDB_API_KEY
+    --entity=""  #Set your wandb entity
 
 # Stream the logs from the job
 gcloud ai-platform jobs stream-logs ${JOB_NAME}
