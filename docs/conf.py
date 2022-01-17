@@ -11,8 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os
-import sys
+# import os
+# import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -41,7 +41,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"ML_Ops_ExamProject"
+project = "ML_Ops_ExamProject"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -184,8 +184,8 @@ latex_documents = [
     (
         "index",
         "ML_Ops_ExamProject.tex",
-        u"ML_Ops_ExamProject Documentation",
-        u"Group 20",
+        "ML_Ops_ExamProject Documentation",
+        "Group 20",
         "manual",
     ),
 ]
@@ -219,8 +219,8 @@ man_pages = [
     (
         "index",
         "ML_Ops_ExamProject",
-        u"ML_Ops_ExamProject Documentation",
-        [u"Group 20"],
+        "ML_Ops_ExamProject Documentation",
+        ["Group 20"],
         1,
     )
 ]
@@ -238,8 +238,8 @@ texinfo_documents = [
     (
         "index",
         "ML_Ops_ExamProject",
-        u"ML_Ops_ExamProject Documentation",
-        u"Group 20",
+        "ML_Ops_ExamProject Documentation",
+        "Group 20",
         "ML_Ops_ExamProject",
         "This is the exam projectt of group 20 for Machine Learning Operation at DTU.",
         "Miscellaneous",
