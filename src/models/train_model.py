@@ -289,6 +289,7 @@ def run():
     # WandB related
     args_parser.add_argument("--wandb-api-key", help="Your WandB API Key for login")
     args_parser.add_argument("--entity", help="WandB project entity")
+    args_parser.add_argument("--sweep-id", help="WandB sweep id")
 
     # Add arguments
     args = args_parser.parse_args()
