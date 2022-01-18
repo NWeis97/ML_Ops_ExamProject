@@ -15,10 +15,16 @@ import torch
 import os
 
 # Debugging
-# import pdb
+import pdb
+
+import seaborn as sns
+sns.set_style("whitegrid")
+
+import hydra
 
 # Import pytest
 import pytest
+
 from src.data.make_dataset import read_data, tokenizer, convert_to_torchdataset
 
 # NB: ENABLE FOR RUNNING SUBSET OF DATA
@@ -85,6 +91,10 @@ def test_is_converted():
         ), "Train label data not a tensor"
 
     for i in range(len(X_test)):
+        assert type(test_set.__getitem__(i)['input_ids']) == torch.Tensor, "Test input_ids data not a tensor"
+        assert type(test_set.__getitem__(i)['attention_mask']) == torch.Tensor, "Test attention_mask data not a tensor"
+        assert type(test_set.__getitem__(i)['labels']) == torch.Tensor, "Test label data not a tensor"
+        
         assert (
             type(test_set.__getitem__(i)["input_ids"]) == torch.Tensor
         ), "Test input_ids data not a tensor"
@@ -110,3 +120,4 @@ def test_load_data():
     assert X_test is not None, "X_test not loaded"
     assert y_train is not None, "y_train not loaded"
     assert y_test is not None, "y_test not loaded"
+
