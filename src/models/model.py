@@ -1,20 +1,19 @@
 # NOT IN USE!
 
 import torch
-from transformers import (set_seed,
-                          TrainingArguments,
-                          Trainer,
-                          GPT2Config,
-                          GPT2Tokenizer,
-                          AdamW, 
-                          get_linear_schedule_with_warmup,
-                          GPT2ForSequenceClassification)
-
+from transformers import (
+    GPT2Config,
+    GPT2Tokenizer,
+    GPT2ForSequenceClassification,
+)
 
 
 from datasets import load_dataset
-imdb = load_dataset("/Users/weis/Documents/Skole/DTU/10_semester/ML_Ops/ML_Ops_ExamProject/data/processed/train_processed.csv")
 
+imdb = load_dataset(
+    "/Users/weis/Documents/Skole/DTU/10_semester/" +
+    "ML_Ops/ML_Ops_ExamProject/data/processed/train_processed.csv"
+)
 
 
 # Number of batches - depending on the max sequence length and GPU memory.
@@ -49,13 +48,11 @@ model_config = GPT2Config.from_pretrained(
 
 # Get model's tokenizer.
 print("Loading tokenizer...")
-tokenizer = GPT2Tokenizer.from_pretrained(
-    pretrained_model_name_or_path=model_name_or_path
-)
+tokenizer = GPT2Tokenizer.from_pretrained(pretrained_model_name_or_path=model_name_or_path)
 # default to left padding
-tokenizer.padding_side = "left"   #NB: Needs better understanding
+tokenizer.padding_side = "left"  # NB: Needs better understanding
 # Define PAD Token = EOS Token = 50256
-tokenizer.pad_token = tokenizer.eos_token  #NB: Needs better understanding
+tokenizer.pad_token = tokenizer.eos_token  # NB: Needs better understanding
 
 
 # Get the actual model.
