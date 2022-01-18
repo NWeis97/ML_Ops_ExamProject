@@ -25,11 +25,11 @@ import pdb
 import seaborn as sns
 sns.set_style("whitegrid")
 
+import hydra
 
 # Import pytest
 import pytest
 
-print(os.getcwd())
 from src.data.make_dataset import read_data, tokenizer, convert_to_torchdataset
 
 # testing if data is being read correctly
@@ -80,7 +80,7 @@ def test_is_converted():
         assert type(test_set.__getitem__(i)['input_ids']) == torch.Tensor, "Test input_ids data not a tensor"
         assert type(test_set.__getitem__(i)['attention_mask']) == torch.Tensor, "Test attention_mask data not a tensor"
         assert type(test_set.__getitem__(i)['labels']) == torch.Tensor, "Test label data not a tensor"
-    
+        
 @pytest.mark.skipif(
     not (
         os.path.exists("data/processed/train_dataset.pt")
