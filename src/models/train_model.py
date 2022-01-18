@@ -58,10 +58,10 @@ output_file_handler = logging.FileHandler(
 )
 logger.addHandler(output_file_handler)
 
-# Get TorchDataset clas
-# import sys
-# sys.path.append("src/data")
-# from src.data.make_dataset import TorchDataset
+# Get TorchDataset class 
+import sys
+sys.path.append("src/data")
+from src.data.make_dataset import TorchDataset
 
 
 # *************************************
@@ -315,9 +315,10 @@ def run():
     if args.wandb_api_key is not None:
         print("Setting up WandB connection and initialization...\n")
 
-        # Get configs
-        os.environ["WANDB_API_KEY"] = args.wandb_api_key
-        os.system("wandb agent mlops_swaggers/examproject-mlops/db0344ee")
+        # Get configs (only set if not already done)
+        if os.environ.get("WANDB_API_KEY") is not None:
+            os.environ["WANDB_API_KEY"] = args.wandb_api_key
+            os.system("wandb agent mlops_swaggers/examproject-mlops/db0344ee")
 
         wandb.init(
             project=args.project_id,

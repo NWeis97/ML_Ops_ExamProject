@@ -17,7 +17,7 @@ parameters:
   batch_size:
     values: [64,128]
   weight_decay:
-    values: [0.005,0.02]
+    values: [0.02]
 
 
 command:
