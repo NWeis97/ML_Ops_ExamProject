@@ -46,6 +46,8 @@ from google.oauth2 import service_account
 
 # Configs
 from hydra import compose, initialize
+from hydra.core.global_hydra import GlobalHydra
+import hydra
 from omegaconf import OmegaConf
 
 # Logging
@@ -290,14 +292,16 @@ def run():
     #********* Hyperparameters ***********
     #*************************************
     print('Loading hyperparameters...\n')
-
+    
+    GlobalHydra().clear()
+    
     initialize(config_path="../../configs/", job_name="train")
     cfg = compose(config_name="training.yaml")
     cfg_data = compose(config_name="makedata.yaml")
     print(f"Data configurations: \n {OmegaConf.to_yaml(cfg_data)}")
     print(f"Training configuration: \n {OmegaConf.to_yaml(cfg)}")
     configs = cfg['hyperparameters']
-
+    
     # Data and model related
     model_name = cfg_data['hyperparameters']['model_name']
     n_labels = cfg_data['hyperparameters']['n_labels']
