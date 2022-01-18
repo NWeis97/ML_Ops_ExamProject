@@ -31,6 +31,9 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 # It’s not needed if you don’t want to do hyperparameter tuning.
 RUN pip3 install cloudml-hypertune
 
+# Initialize WandB agent
+RUN wandb agent mlops_swaggers/examproject-mlops/db0344ee
+
 
 # Installs google cloud sdk, this is mostly for using gsutil to export model.
 RUN wget -nv \
