@@ -317,6 +317,7 @@ def run():
 
         # Get configs
         os.environ["WANDB_API_KEY"] = args.wandb_api_key
+        os.system("wandb agent mlops_swaggers/examproject-mlops/db0344ee")
 
         wandb.init(
             project=args.project_id,
