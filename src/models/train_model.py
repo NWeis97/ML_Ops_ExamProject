@@ -333,7 +333,7 @@ def run():
         print("Setting up WandB connection and initialization...\n")
 
         # Get configs (only set if not already done)
-        if os.environ.get("WANDB_API_KEY") is not None:
+        if os.environ.get("WANDB_API_KEY") == None:
             os.environ["WANDB_API_KEY"] = args.wandb_api_key
             os.system("wandb agent mlops_swaggers/examproject-mlops/db0344ee")
 
