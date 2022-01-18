@@ -58,10 +58,27 @@ output_file_handler = logging.FileHandler(
 )
 logger.addHandler(output_file_handler)
 
-# Get TorchDataset class 
-import sys
-sys.path.append("src/data")
-from src.data.make_dataset import TorchDataset
+
+
+# *************************************
+# ****** Define Dataset class *********
+# *************************************
+class TorchDataset(torch.utils.data.Dataset):
+    def __init__(self, encodings, labels):
+        self.encodings = {key: torch.tensor(val) for key, val in encodings.items()}
+        self.labels = torch.tensor(labels)
+
+    def __getitem__(self, idx):
+        item = {key: val[idx] for key, val in self.encodings.items()}
+        item["labels"] = self.labels[idx]
+        return item
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __select__(self, idx_from, idx_to):
+        items = {key: val[idx_from:idx_to] for key, val in self.encodings.items()}
+        return TorchDataset(items, self.labels[idx_from:idx_to])
 
 
 # *************************************
