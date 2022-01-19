@@ -336,8 +336,16 @@ def run():
         # Get configs (only set if not already done)
         if os.environ.get("WANDB_API_KEY") == None:
             os.environ["WANDB_API_KEY"] = args.wandb_api_key
-            wandb_agent = "wandb agent " + args.entity + "/" + args.project_id + "/" + args.sweep_id
-            os.system(wandb_agent)
+            if args.sweep_id is not None:
+                wandb_agent = (
+                                "wandb agent " + 
+                                args.entity + 
+                                "/" + 
+                                 args.project_id + 
+                                "/" + 
+                                args.sweep_id
+                )
+                os.system(wandb_agent)
 
         wandb.init(
             project=args.project_id,
