@@ -31,7 +31,6 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 # It’s not needed if you don’t want to do hyperparameter tuning.
 RUN pip3 install cloudml-hypertune
 
-
 # Installs google cloud sdk, this is mostly for using gsutil to export model.
 RUN wget -nv \
     https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz && \

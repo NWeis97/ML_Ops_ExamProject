@@ -4,4 +4,4 @@ models/
 scripts-wandb/
 wandb/
 outputs/
-Profiling/
+profiling/

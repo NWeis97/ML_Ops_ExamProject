@@ -1,0 +1,27 @@
+#model.yaml
+program: train_model.py
+method: bayes
+metric:
+  name: validation_accuracy
+  goal: maximize
+parameters:
+#  training:
+  batch_ratio_validation:
+    values: [0.2]
+  lr:
+    values: [0.005,0.02]
+  optimizer:
+    values: ['adamw']
+  warmup_step_perc:
+    values: [0,0.1]
+  batch_size:
+    values: [64,128]
+  weight_decay:
+    values: [0.02]
+
+
+command:
+  - ${env}
+  - python
+  - src/models/train_model.py
+  - ${args_no_hyphens}

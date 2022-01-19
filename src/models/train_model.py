@@ -58,10 +58,27 @@ output_file_handler = logging.FileHandler(
 )
 logger.addHandler(output_file_handler)
 
-# Get TorchDataset clas
-# import sys
-# sys.path.append("src/data")
-# from src.data.make_dataset import TorchDataset
+
+
+# *************************************
+# ****** Define Dataset class *********
+# *************************************
+class TorchDataset(torch.utils.data.Dataset):
+    def __init__(self, encodings, labels):
+        self.encodings = {key: torch.tensor(val) for key, val in encodings.items()}
+        self.labels = torch.tensor(labels)
+
+    def __getitem__(self, idx):
+        item = {key: val[idx] for key, val in self.encodings.items()}
+        item["labels"] = self.labels[idx]
+        return item
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __select__(self, idx_from, idx_to):
+        items = {key: val[idx_from:idx_to] for key, val in self.encodings.items()}
+        return TorchDataset(items, self.labels[idx_from:idx_to])
 
 
 # *************************************
@@ -272,6 +289,7 @@ def run():
     # WandB related
     args_parser.add_argument("--wandb-api-key", help="Your WandB API Key for login")
     args_parser.add_argument("--entity", help="WandB project entity")
+    args_parser.add_argument("--sweep-id", help="WandB sweep id")
 
     # Add arguments
     args = args_parser.parse_args()
@@ -318,14 +336,17 @@ def run():
     if args.wandb_api_key is not None:
         print("Setting up WandB connection and initialization...\n")
 
-        # Get configs
-        os.environ["WANDB_API_KEY"] = args.wandb_api_key
+        # Get configs (only set if not already done)
+        if os.environ.get("WANDB_API_KEY") == None:
+            os.environ["WANDB_API_KEY"] = args.wandb_api_key
+            wandb_agent = "wandb agent " + args.entity + "/" + args.project_id + "/" + args.sweep_id
+            os.system(wandb_agent)
 
         wandb.init(
             project=args.project_id,
             entity=args.entity,
             config={"Model&Data": cfg_data["hyperparameters"], "Train": configs},
-            job_type="Train",
+            job_type="Train"
         )
 
     # *************************************
