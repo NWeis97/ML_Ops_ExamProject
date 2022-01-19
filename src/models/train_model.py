@@ -64,6 +64,15 @@ logger.addHandler(output_file_handler)
 # ****** Define Dataset class *********
 # *************************************
 class TorchDataset(torch.utils.data.Dataset):
+    """
+    Torch data set class
+    
+    __init__ initialize dataset
+    __getitem__ get item in dataset
+    __len__ length of dataset
+    __select__ select pieces of dataset
+    
+    """
     def __init__(self, encodings, labels):
         self.encodings = {key: torch.tensor(val) for key, val in encodings.items()}
         self.labels = torch.tensor(labels)
@@ -85,6 +94,15 @@ class TorchDataset(torch.utils.data.Dataset):
 # ************ Load Data **************
 # *************************************
 def load_data(data_output_filepath, batch_ratio_validation, batch_size, subset):
+    """
+    Load data set
+    
+    args
+        - data_output_filepath for the processed data (data/processed/)
+        - batch_ratio_validation, percentage to use for validation set
+        - Batch size for training
+        - subset (True/False) if it should take a subset of the dataset
+    """
 
     # Load data and put in DataLoader (also split into train and validation data)
     Train = torch.load(data_output_filepath + "train_dataset.pt")
@@ -106,6 +124,14 @@ def load_data(data_output_filepath, batch_ratio_validation, batch_size, subset):
 # *********** Load Model **************
 # *************************************
 def load_model(model_name, n_labels, device):
+    """
+    Load model
+    
+    args
+        - Model name: what is the model name (i.e., model_1.pt)
+        - n_labels: Number of labels in the data
+        - device: Set up device for cuda if wanted
+    """
     # Get model configuration.
     model_config = GPT2Config.from_pretrained(
         pretrained_model_name_or_path=model_name, num_labels=n_labels
@@ -132,7 +158,9 @@ def save_model(model, job_dir, model_name):
     """Saves the model to Google Cloud Storage
 
     Args:
-      args: contains name for saved model.
+      model: The actual model.
+      job_dir: The directory of the job in the cloud
+      model_name: Name of the model
     """
     local_model_path = ""
 
@@ -174,6 +202,18 @@ def save_model(model, job_dir, model_name):
 def load_optimizer(
     model, train_set, optimizer_type, lr, weight_decay, lr_scheduler, warmup_step_perc, epochs
 ):
+    """Load optimizer
+
+    Args:
+      model: the model.
+      train_set: training set
+      optimizer_type: what optimizer to use
+      lr: Learning rate
+      weight_decay: regularisation value for weight decay
+      lr_scheduler: how to schedule the learning rate evolution
+      warmup_step_perc: how much room for warmup
+      epochs: number of epochs we train for
+    """
 
     if optimizer_type == "adamw":
         optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -197,6 +237,16 @@ def load_optimizer(
 # ********** Train model **************
 # *************************************
 def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
+    """Train model
+
+    Args:
+      model: The actual model.
+      train_set: training set
+      optimizer: load optimizer to use
+      device: If using cuda for GPU
+      lr_scheduler: Learning rate scheduler
+      progress_bar: Pretty progress bar for time-tracking
+    """
 
     # Reset for new epoch
     model.train()
@@ -243,6 +293,13 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
 
 
 def validate(model, val_set, device):
+    """Evaluate model
+
+    Args:
+      model: The actual model.
+      Val_set: Validation set
+      device: Device for cuda if wanted for GPU
+      """
     # Evaluation mode
     model.eval()
     running_loss_val = 0
