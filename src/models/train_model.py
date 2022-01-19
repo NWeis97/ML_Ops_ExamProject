@@ -281,29 +281,17 @@ def run():
     # *************************************
     print("Loading hyperparameters...\n")
 
-<<<<<<< HEAD
-    #*************************************
-    #********* Hyperparameters ***********
-    #*************************************
-    print('Loading hyperparameters...\n')
-    
-    GlobalHydra().clear()
-    
-=======
+
     GlobalHydra.instance().clear()
->>>>>>> e9b8ab593aab8848da62bfac7cceb0445bf32355
+
     initialize(config_path="../../configs/", job_name="train")
     cfg = compose(config_name="training.yaml")
     cfg_data = compose(config_name="makedata.yaml")
     print(f"Data configurations: \n {OmegaConf.to_yaml(cfg_data)}")
     print(f"Training configuration: \n {OmegaConf.to_yaml(cfg)}")
-<<<<<<< HEAD
-    configs = cfg['hyperparameters']
-    
-=======
+
     configs = cfg["hyperparameters"]
 
->>>>>>> e9b8ab593aab8848da62bfac7cceb0445bf32355
     # Data and model related
     model_name = cfg_data["hyperparameters"]["model_name"]
     n_labels = cfg_data["hyperparameters"]["n_labels"]
