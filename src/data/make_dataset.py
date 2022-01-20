@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 from transformers import GPT2Tokenizer
 
 # Debugging
-# import pdb
+import pdb
 
 # Configs
 from hydra import compose, initialize
@@ -98,7 +98,7 @@ def read_data():
     return X_train, X_test, y_train, y_test
 
 
-def tokenizer(X_train, X_test, y_train, y_test):
+def tokenizer(X_train, X_test):
     # *************************************
     # ***** Tokenizer Initialization ******
     # *************************************
@@ -153,7 +153,8 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = read_data()
 
     # Tokenize data
-    train_encodings, test_encodings = tokenizer(X_train, X_test, y_train, y_test)
+    train_encodings, test_encodings = tokenizer(X_train, X_test)
+    pdb.set_trace()
 
     # Convert to torch dataset
     train_set, test_set = convert_to_torchdataset(train_encodings, test_encodings, y_train, y_test)

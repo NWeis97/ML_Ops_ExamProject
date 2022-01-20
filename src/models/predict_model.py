@@ -15,6 +15,7 @@ import torch
 from torch.utils.data import DataLoader
 import pandas as pd
 import numpy as np
+import pickle
 
 from sklearn.metrics import classification_report
 
@@ -23,7 +24,7 @@ from datasets import load_metric
 from transformers import GPT2ForSequenceClassification
 
 # Debugging
-import pdb
+# import pdb
 
 # Import the Secret Manager client library.
 from google.cloud import storage
@@ -109,6 +110,7 @@ def main():
 
     # Predict related
     path_to_model = configs["path_to_model"]
+    new_main_model = configs["new_main_model"]
 
     # *************************************
     # *********** Load Data  **************
@@ -146,6 +148,14 @@ def main():
         pretrained_model_name_or_path=os.getcwd() + '/' + temp_state_data,
         local_files_only=True, config=os.getcwd() + '/' + temp_config_data
     )
+
+    # Save model as new main model if wanted
+    if new_main_model == 'true':
+        filename = 'finalized_model.pkl'
+        pickle.dump(model, open(filename, 'wb'))
+        blob = bucket.blob(filename)
+        blob.upload_from_filename(filename)
+        os.remove(os.getcwd() + '/' + filename)
 
     # remove files again
     os.remove(os.getcwd() + '/' + temp_state_data)
