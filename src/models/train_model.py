@@ -258,7 +258,6 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
         # Update step
         step += 1
 
-        pdb.set_trace()
         # Load batch and send to device
         batch = {k: v.to(device) for k, v in batch.items()}
         outputs = model(**batch)
