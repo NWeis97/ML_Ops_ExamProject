@@ -44,7 +44,7 @@ def test_is_tokenized():
     X_train, X_test, y_train, y_test = read_data()
 
     # Tokenizer
-    train_encodings, test_encodings = tokenizer(X_train, X_test, y_train, y_test)
+    train_encodings, test_encodings = tokenizer(X_train, X_test)
 
     # Assert types
     assert hasattr(
@@ -73,7 +73,7 @@ def test_is_converted():
     X_train, X_test, y_train, y_test = read_data()
 
     # Tokenizer
-    train_encodings, test_encodings = tokenizer(X_train, X_test, y_train, y_test)
+    train_encodings, test_encodings = tokenizer(X_train, X_test)
 
     # Convert
     train_set, test_set = convert_to_torchdataset(train_encodings, test_encodings, y_train, y_test)
