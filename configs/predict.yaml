@@ -1,3 +1,4 @@
 #config.yaml
 hyperparameters:
-  path_to_model: 'model_20220118_180941/gpt2/'
+  path_to_model: 'model_20220119_130748/gpt2/'
+  new_main_model: 'true'
