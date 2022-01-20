@@ -258,6 +258,7 @@ def train(model, train_set, optimizer, device, lr_scheduler, progress_bar):
         # Update step
         step += 1
 
+        pdb.set_trace()
         # Load batch and send to device
         batch = {k: v.to(device) for k, v in batch.items()}
         outputs = model(**batch)
@@ -476,7 +477,7 @@ def run():
         save_model(model, args.job_dir, model_name)
     else:
         print(
-            "Job_dir not given, thus not saving model (will no save model when running locally)..."
+            "Job_dir not given, thus not saving model)..."
         )
 
 

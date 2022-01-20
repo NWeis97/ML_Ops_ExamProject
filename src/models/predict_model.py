@@ -23,7 +23,11 @@ from datasets import load_metric
 from transformers import GPT2ForSequenceClassification
 
 # Debugging
-# import pdb
+import pdb
+
+# Import the Secret Manager client library.
+from google.cloud import storage
+from google.oauth2 import service_account
 
 # Graphics
 import seaborn as sns
@@ -55,6 +59,32 @@ logger.addHandler(output_file_handler)
 
 sns.set_style("whitegrid")
 
+
+class TorchDataset(torch.utils.data.Dataset):
+    """
+    Torch data set class
+    
+    __init__ initialize dataset
+    __getitem__ get item in dataset
+    __len__ length of dataset
+    __select__ select pieces of dataset
+    
+    """
+    def __init__(self, encodings, labels):
+        self.encodings = {key: torch.tensor(val) for key, val in encodings.items()}
+        self.labels = torch.tensor(labels)
+
+    def __getitem__(self, idx):
+        item = {key: val[idx] for key, val in self.encodings.items()}
+        item["labels"] = self.labels[idx]
+        return item
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __select__(self, idx_from, idx_to):
+        items = {key: val[idx_from:idx_to] for key, val in self.encodings.items()}
+        return TorchDataset(items, self.labels[idx_from:idx_to])
 
 # #####################################
 # ### Function for training model #####
@@ -89,20 +119,38 @@ def main():
     Test = torch.load(data_output_filepath + "test_dataset.pt")
 
     test_set = DataLoader(Test, batch_size=64, shuffle=False)
+    pdb.set_trace()
 
     # *************************************
     # *********** Load Model **************
     # *************************************
 
-    # Get model configuration
-    logger.info("Loading configuration...")
-
     # Get the actual model
     logger.info("Loading model...")
+
+    # Get model from bucket (cloud storage)
+    credentials = service_account.Credentials.from_service_account_file(os.getcwd()+'/credentials/ReadBucketData.json')
+    storage_client = storage.Client(project='examproject-mlops',credentials=credentials)
+    bucket_name = 'gpt2_exam_project_bucket'
+    state_data = 'pytorch_model.bin'
+    config_data = 'config.json'
+    temp_state_data = 'pytorch_model.bin'
+    temp_config_data = 'config.json'
+
+    bucket = storage_client.get_bucket(bucket_name)
+    blob = bucket.blob('models/base/'+path_to_model+state_data)
+    blob.download_to_filename(temp_state_data)
+    blob = bucket.blob('models/base/'+path_to_model+config_data)
+    blob.download_to_filename(temp_config_data)
+
     model = GPT2ForSequenceClassification.from_pretrained(
-        pretrained_model_name_or_path=os.getcwd() + "/models/" + path_to_model + model_name,
-        local_files_only=True,  # , config=model_config
+        pretrained_model_name_or_path=os.getcwd() + '/' + temp_state_data,
+        local_files_only=True, config=os.getcwd() + '/' + temp_config_data
     )
+
+    # remove files again
+    os.remove(os.getcwd() + '/' + temp_state_data)
+    os.remove(os.getcwd() + '/' + temp_config_data)
 
     # fix model padding token id
     model.config.pad_token_id = model.config.eos_token_id
@@ -155,7 +203,7 @@ def main():
 
     # Create the evaluation report.
     evaluation_report = classification_report(
-        labels_all, predictions, target_names=["Not terror", "Terror"], output_dict=True
+        labels_all, predictions, target_names=["Not Disaster", "Disaster"], output_dict=True
     )
     evaluation_report = pd.DataFrame(evaluation_report)
     # Show the evaluation report.
@@ -168,7 +216,7 @@ def main():
     plot_confusion_matrix(
         y_true=labels_all,
         y_pred=predictions,
-        classes=["Not terror", "Terror"],
+        classes=["Not Disaster", "Disaster"],
         normalize=True,
         show_plot=False,
         magnify=0.1,
