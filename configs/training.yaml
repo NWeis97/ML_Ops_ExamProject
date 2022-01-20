@@ -2,8 +2,8 @@
 hyperparameters:
   batch_size: 64
   batch_ratio_validation: 0.2
-  lr: 0.01
-  lr_scheduler: 'cosine' #see https://huggingface.co/docs/transformers/main_classes/optimizer_schedules for possible types ['linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup']
+  lr: 0.005
+  lr_scheduler: 'cosine_with_restarts' #see https://huggingface.co/docs/transformers/main_classes/optimizer_schedules for possible types ['linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup']
   warmup_step_perc: 0.1 #Only makes sense if lr_scheduler has warmup
   epochs: 10
   seed: 1234
