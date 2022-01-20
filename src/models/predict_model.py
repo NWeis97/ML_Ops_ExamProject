@@ -119,7 +119,6 @@ def main():
     Test = torch.load(data_output_filepath + "test_dataset.pt")
 
     test_set = DataLoader(Test, batch_size=64, shuffle=False)
-    pdb.set_trace()
 
     # *************************************
     # *********** Load Model **************
